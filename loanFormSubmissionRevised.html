@@ -1,0 +1,550 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdn.elliemae.io/elliemae/core/ssf/1.0/elli.ssf.guest-with-polyfill.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script>
+	var tpoAppObject = null;
+  var siteId = "";
+var channel = "";
+        var appraisalCompany = "";
+	var user_FullName = "";
+	var user_Email = "";
+	var tpoLOEmail = "";
+	var tpoProcEmail = "";
+	var tpoPOCEmail = "";
+  	var accountExecutiveEmail = "";
+	var leIssuedBy = "";
+	var altPrime = "";
+	var altPrimeIssuedBy = "";
+	var whoPaid = "";
+	var compAmountPaid = "";
+	var refinanceType = "";
+	var loanNumber = "";
+	var loanProgramName = "";
+	var programNameExists = "";
+	var highBalance = "";
+        var incomeVerifType = "";
+        var loanGuid = "";
+        var loFullName = "";
+        var loPhoneNum = "";
+        var loEmail = "";
+        var loNMLS = "";
+	var discloseDate = "";
+	var discloseDateCheckbox = "";
+	var fundingFeeList = "";
+	var loanOriginationFees = "";
+	var processingFees = "";
+	var IH_Fee = "";
+	var feeExists = "";
+	var productType = "";
+        var processorName = "";
+        var processorPhoneNum = "";
+        var processorEmail = "";
+        var processorNMLS = "";
+	var borrowerType = "";
+        var borrowerFirstName = "";
+	var borrowerLastName = "";
+	var borrowerEmail = "";
+        var CoBorrowerFirstName = "";
+	var CoBorrowerLastName = "";
+	var CoBorrowerEmail = "";
+        var transactionType = "";
+        var programType = "";
+        var otherProgramType = "";
+        var occupancy = "";
+        var fixedLoanTerm = "";
+        var amortizationType = "";
+        var armType = "";
+        var propertyType = "";
+        var compensation = "";
+	      var impounds = "";
+        var submissionStatus = "";
+	var totalLoanAmount = "";
+  var tpoDisclosedBy = "";
+	    var dscrEffectiveDate = "No";
+        var contactsList = [];
+        var customFields = [];
+        var loanObj = {};
+    // Instantiate objects on window load (one-time event handling).
+    window.addEventListener("load", function () {
+      elli.script.guest.create();
+      elli.script.getObject("tpoApplication").then(function (tpoAppObject) {
+        this.tpoAppObject = tpoAppObject;
+        GetUserData();
+
+		    // This call will only succeed on page load event if user already has opened a loan in TPOC.
+		    // Use the onLoanOpened event (as shown below) to get/refresh loan data when user opens a loan.
+          GetLoanData();
+      });
+    });
+    // Subscribe to loanOpen event to refresh context when loan context changes (context event handling).
+     elli.script.subscribe('tpoApplication', 'loanOpen', onLoanOpened);
+     function onLoanOpened(proxy, loanData) {
+       GetLoanData();
+       this.loanData = loanData;
+       console.log('loanOpen => loanData ===', loanData);
+     }
+
+
+    // Sample methods for getting various data objects, just console logging for illustrative purposes.
+    function GetUserData() {
+      // Get basic user info and console log only.
+      tpoAppObject.getUserData().then(function (userData) {
+	      user_FullName = userData.userFullName;
+	      user_Email = userData.email;
+        console.log('User Data ===', userData);
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+      // Get full user profile, console log and populate some basic on screen information.
+      tpoAppObject.getUserProfileData().then(function (userProfileData) {
+        console.log('User Profile Data ===', userProfileData);
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+        }
+
+        function myFunction() {
+          var loFullNameURL = "?tfa_2=" + loFullName + "&";
+          var siteIdURL = "tfa_888=" + siteId + "&";
+          var refinanceTypeURL = "tfa_319=" + refinanceType + "&";
+		      var userFullNameURL = "tfa_412=" + user_FullName + "&";
+          var userEmailURL = "tfa_413=" + user_Email + "&";
+		      var loanOriginationFeesURL = "tfa_252=" + loanOriginationFees + "&";
+		      var processingFeesURL = "tfa_631=" + processingFees + "&";
+		      var IH_FeeURL = "tfa_632=" + IH_Fee + "&";
+		      var feeExistsURL = "tfa_636=" + feeExists + "&";
+		      var tpoLOEmailURL = "tfa_663=" + tpoLOEmail + "&";
+		      var tpoProcEmailURL = "tfa_664=" + tpoProcEmail + "&";
+		      var tpoPOCEmailURL = "tfa_665=" + tpoPOCEmail + "&";
+          	var accountExecutiveEmailURL = "tfa_864=" + accountExecutiveEmail + "&";
+		var totalLoanAmountURL = "tfa_881=" + totalLoanAmount + "&";
+		      var leIssuedByURL = "tfa_686=" + leIssuedBy + "&";
+		var altPrimeURL = "tfa_889=" + altPrime + "&";
+		var altPrimeIssuedByURL = "tfa_892=" + altPrimeIssuedBy + "&";
+		      var discloseDateURL = "tfa_719=" + discloseDate + "&";
+		      var discloseDateCheckboxURL = "tfa_727=" + discloseDateCheckbox + "&";
+          var whoPaidURL = "tfa_249=" + whoPaid + "&";
+	        var productTypeURL = "tfa_720=" + productType + "&";
+	        //var compAmountPaidURL = "tfa_252=" + compAmountPaid + "&";
+          var loanNumberURL = "tfa_339=" + loanNumber + "&";
+          var loPhoneNumURL = "tfa_6=" + loPhoneNum + "&";
+	        var highBalanceURL = "tfa_324=" + highBalance + "&";
+          var loEmailURL = "tfa_8=" + loEmail + "&";
+	        var loNMLSURL = "tfa_10=" + loNMLS + "&";
+          var processorNameURL = "tfa_303=" + processorName + "&";
+          var processorEmailURL = "tfa_305=" + processorEmail + "&";
+          var processorPhoneNumURL = "tfa_304=" + processorPhoneNum + "&";
+	        var borrowerTypeURL = "tfa_417=" + borrowerType + "&";
+          var borrowerFirstNameURL = "tfa_18=" + borrowerFirstName + "&";
+	        var borrowerLastNameURL = "tfa_20=" + borrowerLastName + "&";
+	        var borrowerEmailURL = "tfa_690=" + borrowerEmail + "&";
+	        var CoBorrowerFirstNameURL = "tfa_414=" + CoBorrowerFirstName + "&";
+	        var CoBorrowerLastNameURL = "tfa_416=" + CoBorrowerLastName + "&";
+	        var CoBorrowerEmailURL = "tfa_691=" + CoBorrowerEmail + "&";
+          var programTypeURL = "tfa_283=" + programType + "&";
+          var field1172URL = "tfa_869=" + programType + "&";
+          var propertyTypeURL = "tfa_243=" + propertyType + "&";
+          var occupancyURL = "tfa_269=" + occupancy + "&";
+          var fixedLoanTermURL = "tfa_265=" + fixedLoanTerm + "&";
+          var amortizationTypeURL = "tfa_310=" + amortizationType + "&";
+          var armTypeURL = "tfa_261=" + armType + "&";
+	        var compensationURL = "tfa_249=" + compensation + "&";
+          var loanGuidURL = "tfa_328=" + loanGuid + "&";
+	        var loanProgramNameURL = "tfa_816=" + loanProgramName + "&";
+	        var programNameExistsURL = "tfa_817=" + programNameExists + "&";
+		      var impoundsURL = "tfa_813=" + impounds + "&";
+          var submissionStatusURL = "tfa_850=" + submissionStatus + "&";
+          var submissionStatusTextURL = "tfa_857=" + submissionStatus + "&";
+          var incomeVerifTypeURL = "tfa_824=" + incomeVerifType + "&";
+		var dscrEffectiveDateURL = "tfa_897=" + dscrEffectiveDate + "&";
+		var whoPaidDSCRURL = "tfa_903=" + whoPaid + "&";
+		var tpoDisclosedByURL = "tfa_906=" + tpoDisclosedBy + "&";
+		var channelURL = "tfa_908=" + channel + "&";
+          var transactionTypeURL = "tfa_293=" + transactionType;
+
+
+          //window.location.href('https://www.tfaforms.com/4759136?tfa_2=' + loFullName);
+          var fieldValueString = loFullNameURL + siteIdURL + refinanceTypeURL + tpoLOEmailURL + loanProgramNameURL + impoundsURL + accountExecutiveEmailURL + totalLoanAmountURL + incomeVerifTypeURL + programNameExistsURL + tpoProcEmailURL + productTypeURL + discloseDateURL + discloseDateCheckboxURL + tpoPOCEmailURL + loanOriginationFeesURL + processingFeesURL + leIssuedByURL + altPrimeURL + altPrimeIssuedByURL + IH_FeeURL + feeExistsURL + userFullNameURL + userEmailURL + whoPaidURL + loPhoneNumURL + loEmailURL + loNMLSURL + highBalanceURL + loanNumberURL + processorNameURL + processorEmailURL + processorPhoneNumURL + borrowerTypeURL + submissionStatusURL + submissionStatusTextURL + borrowerFirstNameURL + borrowerLastNameURL + borrowerEmailURL + CoBorrowerFirstNameURL + CoBorrowerLastNameURL + programTypeURL + field1172URL + propertyTypeURL + occupancyURL + fixedLoanTermURL + amortizationTypeURL + armTypeURL + compensationURL + loanGuidURL + dscrEffectiveDateURL + whoPaidDSCRURL + tpoDisclosedByURL + channelURL + transactionTypeURL;
+          document.location.href = "https://www.tfaforms.com/4799231" + fieldValueString;
+          //document.location.href = "https://www.tfaforms.com/4799231?/tfa_2=" + loFullName;
+          //window.open('https://www.tfaforms.com/4799231?tfa_2=' + loFullName,'_blank');
+          //window.open('https://www.actappraisal.com/#act-login', '_blank');
+        }
+
+    function GetLoanData() {
+      // Get loan summary and console log only.
+      // tpoAppObject.getLoanSummary().then(function (loanSummary) {
+      //   console.log('Loan Summary ===', loanSummary);
+      // })
+      //   .catch(function (err) {
+      //     console.log('Fetch Error :-S', err);
+      //   });
+      // Get full loan object, console log and populate some basic on screen information.
+      tpoAppObject.getLoanData().then(function (loanData) {
+          console.log('Loan Data ===', loanData);
+          //Getting Appraisal Company Name
+          contactsList = loanData.Contacts;
+          console.log('Contacts list', contactsList);
+          loanGuid = loanData.EncompassId;
+	  loanNumber = loanData.LoanNumber;
+	  loanProgramName = loanData.LoanProgramName;
+	  totalLoanAmount = loanData.BaseLoanAmount;
+	      channel = loanData.Channel;
+    customFields = loanData.CustomFields;
+	      if(customFields) {
+
+    customFields.forEach((item, index) => {
+      if(item.FieldName === 'CX.INCOMEVERIFYTYPE')
+      {
+        incomeVerifType = item.StringValue;
+      }
+	    if(item.FieldName === 'CX.AEEMAIL')
+	    {
+		    accountExecutiveEmail = item.StringValue;
+	    }
+      if(item.FieldName === 'CX.TPO.DISCLOSEDBY')
+      {
+        if(item.StringValue)
+        {
+          tpoDisclosedBy = item.StringValue.replace(/\s/g, '');;
+        }
+        else { tpoDisclosedBy = "";}
+      }
+	    if(item.FieldName === 'CX.DSCR.EFFECTIVEDATE'){
+		    if(item.StringValue){
+			    dscrEffectiveDate = item.StringValue;
+		    }
+		    else {
+			    dscrEffectiveDate = "No";
+		    }
+	    }
+    });
+	      }
+
+	      if(loanProgramName) {
+		      programNameExists = "Yes";
+	      }
+	      else { programNameExists = "No";
+		   loanProgramName = "";}
+	      loNMLS = loanData.NmlsLoanOriginatorId;
+	      if(!loNMLS){
+		      loNMLS = "";
+	      }
+	      whoPaid = loanData.LOCompensation.WhoPaidCompensation;
+	      if(dscrEffectiveDate == "Yes"){
+		      whoPaid = 'Borrower Paid';
+	      }
+	      leIssuedBy = loanData.TPO.LEIssuedBy;
+	      compAmountPaid = loanData.TotalPaidToBrokerAmount;
+	      if(compAmountPaid == null) {
+		      compAmountPaid = '';
+	      }
+	      programType = loanData.MortgageType;
+
+	  if(loanProgramName) {
+	     if(loanProgramName.includes('HB')) {
+	        highBalance = 'Yes';
+	      }
+	     else {
+		highBalance = 'No';
+	     }
+
+	if(loanProgramName.includes('Alt Prime')){
+          	programType = 'Non-QM';
+		altPrime = 'Yes';
+		leIssuedBy = 'Lender';
+		altPrimeIssuedBy = 'Lender';
+          }
+		  else {
+			  altPrime = 'No';
+		  }
+
+// 	    if(loanProgramName.includes('Prime')){
+// 		      productType = 'Prime Direct';
+// 		    programType = 'Non-QM';
+// 	      }
+// 	      else if(loanProgramName.includes('Credit Direct')){
+
+// 		      productType = 'Credit Direct';
+// 		      programType = 'Non-QM';
+// 	      }
+// 	      else if(loanProgramName.includes('Income Direct')){
+// 		      productType = 'Income Direct';
+// 		      programType = 'Non-QM';
+// 	      }
+// 	      else if(loanProgramName.includes('Asset')){
+// 		      productType = 'Asset Direct';
+// 		      programType = 'Non-QM';
+// 	      }
+// 	      else if(loanProgramName.includes('DCR Direct')){
+// 		      productType = 'DCR Direct';
+// 		      programType = 'Non-QM';
+// 	      }
+
+
+
+	  }
+	      else { highBalance = 'No'; }
+
+	      discloseDate = loanData.RegulationZ.initialDisclosureProvidedDate;
+	      if(discloseDate) {
+		  discloseDateCheckbox = 'Yes';
+	      }
+	      else {
+		  discloseDateCheckbox = 'No';
+      discloseDate = '';
+	      }
+
+          contactsList.forEach((item, index) => {
+            //console.log('item: ' + index + ": " + item);
+            if(item.ContactType === 'APPRAISAL_COMPANY')
+            {
+            //console.log(item.Name);
+            appraisalCompany = item.Name;
+            }
+            // if(item.ContactType === 'LOAN_OFFICER')
+            // {
+            //   if(item.Name != 'undefined')
+            //   loFullName = item.Name;
+            //   loPhoneNum = item.Phone;
+            //   loEmail = item.Email;
+            // }
+
+            if(item.ContactType === 'LOAN_PROCESSOR'){
+              processorName = item.Name;
+              processorPhoneNum = item.Phone;
+              processorEmail = item.Email;
+            }
+	    if(item.CategoryName === 'Broker\'s Loan Contact'){
+	      if(item.Email){
+		 tpoPOCEmail = item.Email;
+	      }
+	      else { tpoPOCEmail = ""; }
+	    }
+          });
+	      impounds = loanData.RateLock.ImpoundWaived;
+	      if(!impounds){
+		      impounds = "";
+	      }
+        //Checking TPO.X90 for initial submission date. If TPO.X90 is empty, not submitted.
+        if(loanData.TPO.InitialSubmitDate){
+          if(loanData.TPO.InitialSubmitDate.length > 0){
+            submissionStatus = "Submitted";
+            }
+            else {
+            submissionStatus = "Not Submitted";
+            }
+          }
+        else{
+        submissionStatus = "Not Submitted";
+        }
+          //Setting loan officer name
+          borrowerFirstName = loanData.Applications[0].Borrower.FirstName;
+	  borrowerLastName = loanData.Applications[0].Borrower.LastName;
+	  borrowerEmail = loanData.Applications[0].Borrower.EmailAddressText;
+	  if(!borrowerEmail)
+	  {
+		  borrowerEmail = '';
+	  }
+	      if(loanData.Applications[0].Coborrower.BorrowerType == 'Individual')
+		 {
+			 borrowerType = 'Individual';
+		 }
+	      else {
+		      CoBorrowerFirstName = loanData.Applications[0].Coborrower.FirstName;
+		      CoBorrowerLastName = loanData.Applications[0].Coborrower.LastName;
+		      CoBorrowerEmail = loanData.Applications[0].Coborrower.EmailAddressText;
+	      }
+          transactionType = loanData.Property.LoanPurposeType;
+
+
+
+          propertyType = loanData.Uldd.AttachmentType;
+          occupancy = loanData.Property.PropertyUsageType;
+          amortizationType = loanData.LoanAmortizationType;
+          compensation = loanData.RateLock.BorrLenderPaid;
+          refinanceType = loanData.LoanPurposeOfRefinanceType;
+	      fundingFeeList = loanData.FundingFeeList;
+	      tpoLOEmail = loanData.TPO.LOEmail;
+	      tpoProcEmail = loanData.TPO.LPEmail;
+        console.log("TPO LO Email: " + tpoLOEmail);
+        console.log("TPO Processor Email: " + tpoProcEmail);
+        console.log("TPO POC Email: " + tpoPOCEmail);
+	      //tpoPOCEmail = loanData.
+
+
+//added an if statement here
+	      //Finding 801a or field 454
+	      if(fundingFeeList){
+if(fundingFeeList.includes("801a."))
+{
+  var begIndex = fundingFeeList.indexOf("801a.");
+  var lastIndex = fundingFeeList.length-1;
+  var shortenedList = fundingFeeList.substring(begIndex,lastIndex);
+  var endIndex = 0;
+  if(shortenedList.indexOf("\n") == -1){
+    console.log("No return character");
+  }
+  else {
+    endIndex = shortenedList.indexOf("\n");
+    var lastSubstring = shortenedList.substring(0,endIndex);
+	  loanOriginationFees = lastSubstring.substring(lastSubstring.lastIndexOf("$")+1,endIndex);
+        console.log(loanOriginationFees);
+
+  }
+}
+	      else {
+		      loanOriginationFees = "";
+	      }
+
+  //Finding 813 or Field 370
+if(fundingFeeList.includes("813."))
+{
+  var begIndex = fundingFeeList.indexOf("813.");
+  var lastIndex = fundingFeeList.length-1;
+  var shortString = fundingFeeList.substring(begIndex,lastIndex);
+  var endIndex = 0;
+  if(shortString.indexOf("\n") == -1){
+    console.log("No return character");
+  }
+  else {
+    endIndex = shortString.indexOf("\n");
+    var lastSubstring = shortString.substring(0,endIndex);
+    processingFees = lastSubstring.substring(lastSubstring.lastIndexOf("$")+1,endIndex);
+    console.log(processingFees);
+  }
+}
+	      else {
+		      processingFees = "";
+	      }
+
+    //Finding 801c or Field 1621
+if(fundingFeeList.includes("801c."))
+{
+  var begIndex = fundingFeeList.indexOf("801c.");
+  var lastIndex = fundingFeeList.length-1;
+  var shortString = fundingFeeList.substring(begIndex,lastIndex);
+  var endIndex = 0;
+  if(shortString.indexOf("\n") == -1){
+    console.log("No return character");
+  }
+  else {
+    endIndex = shortString.indexOf("\n");
+    var lastSubstring = shortString.substring(0,endIndex);
+	  IH_Fee = lastSubstring.substring(lastSubstring.lastIndexOf("$")+1,endIndex);
+    console.log(IH_Fee);
+  }
+}
+else
+{
+  IH_Fee = "";
+}
+	      }
+
+//added an if statement here
+
+	      if(IH_Fee != ""|| processingFees != "")
+		 {
+		 feeExists = 'Yes';
+		 }
+	      else {
+		      feeExists = 'No';
+	      }
+
+          loFullName = loanData.TPO.LOName;
+          loEmail = loanData.TPO.LOEmail;
+          loPhoneNum = loanData.TPO.CompanyPhone;
+
+          if(processorName == null){
+            processorName = '';
+            processorEmail = '';
+            processorPhoneNum = '';
+          }
+
+
+          if(transactionType === 'NoCash-Out Refinance') { transactionType = 'Rate/Term Refinance'; }
+          if(transactionType === 'Cash-Out Refinance') { transactionType = 'Cash-Out Refinance'; }
+
+          if(programType === 'Conventional') {programType = 'Conforming';}
+          if(programType === 'FarmersHomeAdministration') { programType = 'USDA'; }
+
+          if(transactionType === 'Purchase') { refinanceType = 'N/A'; }
+          else {
+            if(refinanceType === 'InterestRateReductionRefinanceLoan') { refinanceType = 'IRRRL'; }
+            if(refinanceType === 'FullDocumentation') { refinanceType = 'Full Documentation'; }
+            if(refinanceType === 'StreamlineWithoutAppraisal') { refinanceType = 'Streamline'; }
+            if(refinanceType === '') { refinanceType = "N/A"; }
+          }
+
+          //programType = ( programType==='Conventional' ? 'Conforming' : programType);
+
+          if(propertyType === 'Detached'){ propertyType = 'SFR';}
+          if(propertyType === 'Condominium') { propertyType = 'Condo'; }
+
+          if(occupancy === 'PrimaryResidence') { occupancy = 'Owner-Occupied';}
+          if(occupancy === 'SecondHome') { occupancy = 'Second Home';}
+          if(occupancy === 'Investor') { occupancy = 'Investment (NOO)';}
+
+          if(amortizationType === 'Fixed') {
+            amortizationType = 'Fixed Rate';
+            fixedLoanTerm = loanData.LoanAmortizationTermMonths;
+            fixedLoanTerm = fixedLoanTerm / 12;
+            fixedLoanTerm = fixedLoanTerm + " YR";
+          }
+          else if(amortizationType === 'AdjustableRate') {
+            amortizationType = 'ARM';
+            armType = loanData.Hmda.IntroRatePeriod;
+            switch(armType) {
+          case "60":
+            armType = "5/1 ARM";
+            break;
+          case "84":
+            armType = "7/1 ARM";
+            break;
+          case "120":
+            armType = "10/1 ARM";
+            break;
+          default:
+        }
+
+          }
+
+
+          //propertyType = ( propertyType==='Detached' ? 'SFR' : (propertyType ==='Condominium'? 'Condo' : propertyType) );
+          console.log("LO Full Name: " + loFullName + " LO Phone Num: " + loPhoneNum + " LO Email: " + loEmail +
+          " Processor Name: " + processorName + " Processor Email: " + processorEmail + " Processor Phone Num: " + processorPhoneNum +
+          " BorrowerName: " + borrowerFirstName + " CoborrowerFirstName: " + CoBorrowerFirstName + " TransactionType: " + transactionType +
+          " ProgramType: " + programType + " RefinanceType: " + refinanceType + " PropertyType: " + propertyType +
+          " Occupancy: " + occupancy + " Fixed loan Term: " + fixedLoanTerm + " AmortizationType: " + amortizationType +
+          " Compensation: " + compensation + " High Balance: " + highBalance + " user full name: " + user_FullName + " DSCR Effective Date: " + dscrEffectiveDate);
+console.log(loanData);
+
+          // if(loanData.Property.LoanPurposeType === "Cash-Out Refinance") { transactionType = "tfa_295"}
+          // if(loanData.Property.LoanPurposeType === "Purchase") { transactionType = "tfa_294"}
+          // if(loanData.Property.LoanPurposeType === "No Cash-Out Refinance") { transactionType = "tfa_296"}
+
+          // loanData.Applications.forEach((item, index) => {
+          //   borrowerFirstName = item.Borrower.FullName;
+          // });
+	    //FormAssembly "Email Responses to" code snippet
+	    //@IF(@OR(%%tfa_663%%=%%tfa_665%%,%%tfa_664%%=%%tfa_665%%),@IF(%%tfa_663%%=%%tfa_664%%,%%tfa_663%%,@CONCATENATE(%%tfa_664%%,",",%%tfa_663%%,",",%%tfa_864%%,",wsubmissions@myndm.com")),@CONCATENATE(%%tfa_664%%,",",%%tfa_663%%,",",%%tfa_864%%,",wsubmissions@myndm.com"))
+      tpoAppObject.getExternalOrgDetails().then(function(externalOrgData) {
+        console.log('External Org data ===', externalOrgData);
+        siteId = externalOrgData.siteId;
+        myFunction();
+        });
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+    }
+    </script>
+</head>
+<body style="font-family: ProximaNova-Medium,Helvetica,Arial,sans-serif;">
+</body>
+</html>

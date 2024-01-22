@@ -1,0 +1,249 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdn.elliemae.io/elliemae/core/ssf/1.0/elli.ssf.guest-with-polyfill.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script>
+        var tpoAppObject = null;
+        var appraisalCompany = "";
+        var contactsList = [];
+        var loanObj = {};
+    // Instantiate objects on window load (one-time event handling).
+    window.addEventListener("load", function () {
+      elli.script.guest.create();
+      elli.script.getObject("tpoApplication").then(function (tpoAppObject) {
+        this.tpoAppObject = tpoAppObject;
+        $("div#processing").show();
+        GetUserData();
+        $("div#processing").hide();
+
+		    // This call will only succeed on page load event if user already has opened a loan in TPOC.
+		    // Use the onLoanOpened event (as shown below) to get/refresh loan data when user opens a loan.
+          GetLoanData();
+      });
+    });
+    // Subscribe to loanOpen event to refresh context when loan context changes (context event handling).
+     elli.script.subscribe('tpoApplication', 'loanOpen', onLoanOpened);
+     function onLoanOpened(proxy, loanData) {
+       $("div#processing").show();
+       GetLoanData();
+       $("div#loanAvailable").show();
+       $("div#loanNotAvailable").hide();
+       this.loanData = loanData;
+       console.log('loanOpen => loanData ===', loanData);
+     }
+
+
+    // Sample methods for getting various data objects, just console logging for illustrative purposes.
+    function GetUserData() {
+      // Get basic user info and console log only.
+      tpoAppObject.getUserData().then(function (userData) {
+        console.log('User Data ===', userData);
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+      // Get full user profile, console log and populate some basic on screen information.
+      tpoAppObject.getUserProfileData().then(function (userProfileData) {
+        console.log('User Profile Data ===', userProfileData);
+        if (typeof userProfileData.FirstName === 'undefined') {
+          $('#userAvailable').hide();
+        } else {
+          $('#userAvailable').show();
+            // Get a few fields for illustrative purposes.
+            $('#userName').html(userProfileData.FirstName + ' ' + userProfileData.LastName);
+          $('#userEmail').html(userProfileData.Email);
+          $('#userOrgId').html(userProfileData.ExternalOrgID);
+          $('#userId').html(userProfileData.ExternalUserID);
+        }
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+        }
+
+
+        function myFunction(appraisalName) {
+            if (appraisalName) {
+                if (appraisalName.toLowerCase().includes('act appraisal')) {
+                    window.open('https://www.actappraisal.com/#act-login', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('amc appraisal management company, llc')) {
+                    window.open('https://amc.myvalutrac.com/auth/login.aspx', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('appraisal links')) {
+                    window.open('https://appraisallinks.appraisalscope.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('appraisal valet, inc.')) {
+                    window.open('https://www.appraisalvalet.com/login/', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('appraiserVendor.com, llc')) {
+                    window.open('https://appraiservendor.spurams.com/login.aspx', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('axis appraisal management solutions')) {
+                    window.open('https://www.axis-amc.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('caliber amc')) {
+                    window.open('http://caliberamc.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('class appraisal')) {
+                    window.open('https://class.appraisalscope.com/', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('class valuation')) {
+                    window.open('https://class.appraisalscope.com/', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('clear capital valuations')) {
+                    window.open('https://www.clearcapital.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('effort appraisal group')) {
+                    window.open('http://www.effortappraisalmanagement.com/', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('equity solutions usa')) {
+                    window.open('https://esusa.appraisalscope.com/', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('first choice appraisal management')) {
+                    window.open('http://www.firstchoiceamc.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('golden state amc')) {
+                    window.open('https://goldstate.appraisalscope.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('got appraisals')) {
+                    window.open('https://www.gotappraisals.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('hvcc appraisal ordering')) {
+                    window.open('http://www.hvccappraisalordering.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('land gorilla')) {
+                    window.open('http://landgorilla.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('lci appraisal management')) {
+                    window.open('http://www.lci-network.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('lender\'s valuation services')) {
+                    window.open('http://www.lvs-amc.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('lenders link')) {
+                    window.open('http://www.lenders-link.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('nationwide property & appraisal services')) {
+                    window.open('https://onestopappraisals.appraisalscope.com', '_blank');
+                }
+                else if (appraisalName.toLowerCase().toLowerCase().includes('priority appraisal usa')) {
+                    window.open('', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('settlement one valuation (port retention only)')) {
+                    window.open('', '_blank');
+                }
+                else if (appraisalName.toLowerCase().includes('so cal direct')) {
+                    window.open('https://socaldirect.myvalutrac.com', '_blank');
+                }
+		else if (appraisalName.toLowerCase().includes('valu tech')) {
+		    window.open('https://valutech.appraisalscope.com/','_blank');
+		}
+		else if (appraisalName.toLowerCase().includes('consolidated analytics')) {
+		    window.open('https://caportal.appraisalscope.com/','_blank');
+		}
+		    else if (appraisalName.toLowerCase().includes('core valuation')) {
+		    window.open('https://corevaluationmanagement.spurams.com/login.aspx/','_blank');
+		}
+		    else if (appraisalName.toLowerCase().includes('clarity appraisal')) {
+		    window.open('http://www.clarityamc.com','_blank');
+		}
+		    else if (appraisalName.toLowerCase().includes('solidifi')) {
+		    window.open('https://www.solidifi.com/','_blank');
+		}
+		    else if (appraisalName.toLowerCase().includes('apex appraisal service')) {
+		    window.open('https://www.apexone.com/login/','_blank');
+		}
+		    else if (appraisalName.toLowerCase().includes('broad street valuations')) {
+		    window.open('https://www.broadstreetvaluations.com','_blank');
+		}
+            }
+            else {
+              $('#userAvailable').hide();
+              $('#loanAvailable').hide();
+              $('#noAMCAssigned').show();
+
+                console.log('No appraisal company assigned');
+            }
+        }
+
+    function GetLoanData() {
+      // Get loan summary and console log only.
+      // tpoAppObject.getLoanSummary().then(function (loanSummary) {
+      //   console.log('Loan Summary ===', loanSummary);
+      // })
+      //   .catch(function (err) {
+      //     console.log('Fetch Error :-S', err);
+      //   });
+      // Get full loan object, console log and populate some basic on screen information.
+      tpoAppObject.getLoanData().then(function (loanData) {
+          //console.log('Loan Data ===', loanData);
+          //Testing the contact list out
+          contactsList = loanData.Contacts;
+          contactsList.forEach((item, index) => {
+            if(item.ContactType === 'APPRAISAL_COMPANY')
+            {
+            console.log(item.Name);
+            appraisalCompany = item.Name;
+            }
+          });
+          //console.log(contactsList);
+          //appraisalCompany = loanData.UnderwriterSummary.OriginalAppraiser;
+        if (typeof loanData.LoanNumber === 'undefined') {
+          $('#loanNotAvailable').show();
+          $('#loanAvailable').hide();
+        } else {
+          $('#loanNotAvailable').hide();
+          $('#loanAvailable').show();
+          // Get a few property address level fields for illustrative purposes.
+            $('#loanNumber').html(loanData.LoanNumber);
+            $('#loanGUID').html(loanData.EncompassId);
+            //console.log('UnderWriterSummary ===',loanData.UnderwriterSummary);
+          $('#propertyStreet').html(loanData.Property.StreetAddress);
+          $('#propertyCity').html(loanData.Property.City);
+          $('#propertyState').html(loanData.Property.State);
+          $('#propertyZip').html(loanData.Property.PostalCode);
+          $('#appraiser').html(appraisalCompany);
+          $('#processing').hide();
+            $('#results').show();
+            myFunction(appraisalCompany);
+
+        }
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+    }
+
+    function buttonFunction()
+    {
+      myFunction(appraisalCompany);
+    }
+    </script>
+</head>
+<body style="font-family: ProximaNova-Medium,Helvetica,Arial,sans-serif;">
+    <div style="padding-left: 30px;">
+        <div>
+          <div id="processing">
+            <h2>Pulling Assigned AMC</h2>
+          </div>
+            <div id="userAvailable" style="display: none;">
+                <h2>AMC:&nbsp;<span id="appraiser"></span></h2>
+            </div>
+            <div id="noAMCAssigned" style="display: none;">
+                <h2>No AMC Selected</h2>
+                <h3>Please contact your Account Manager for assistance</h3>
+            </div>
+            <div id="loanNotAvailable">
+                <h2>No Loan Selected</h2>
+            </div>
+            <div id="loanAvailable" style="display: none;">
+                <button class="button" onclick="buttonFunction()">Request Appraisal</button>
+            </div>
+        </div>
+        <hr style="clear: both" />
+    </div>
+</body>
+</html>

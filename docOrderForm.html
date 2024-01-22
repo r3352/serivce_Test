@@ -1,0 +1,278 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdn.elliemae.io/elliemae/core/ssf/1.0/elli.ssf.guest-with-polyfill.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script>
+        var tpoAppObject = null;
+        var loanGuid = "";
+        var contactsList = [];
+        var borrowerFirstName = "";
+        var borrowerLastName = "";
+        var brokerName = "";
+        var accountManager = "";
+        var titleCo = "";
+        var titlePhoneNum = "";
+        var titleContact = "";
+        var escrowCo = "";
+        var escrowPhone = "";
+        var escrowContact = "";
+        var escrowEmail = "";
+        //Need to pull value from 1870 for POA, but didn't do it yet.
+        var poa = "";
+        var vestingText = "";
+        //weird values pulling for estimatedClosingDate
+        var estimatedClosingDate = "";
+        //weird values pulling for firstPaymentDate
+        var firstPaymentDate = "";
+        var loanProgram = "";
+        //Need to figure out exact wording for choices
+        var transactionType = "";
+        var impoundsCheck = "";
+        var impounds = "";
+        var interestRate = "";
+        var totalLoanAmount = "";
+        var whoPaid = "";
+        var fundingFeeList = "";
+        var fundingFeesArray = [];
+        var contractProcessorFee = "";
+        var contractProcessorName = "";
+        var brokerFeesBorrowerPaidComp = "";
+        var originationFee = "";
+        var feesArray = [];
+        var brokerOtherLoanFeePercentage = "";
+        var brokerOtherLoanFeeAmount = "";
+        var totalBrokerFees = "";
+        var loEmail = "";
+        var loPhone = "";
+        var loName = "";
+        var loFax = "";
+
+    // Instantiate objects on window load (one-time event handling).
+    window.addEventListener("load", function () {
+      elli.script.guest.create();
+      elli.script.getObject("tpoApplication").then(function (tpoAppObject) {
+        this.tpoAppObject = tpoAppObject;
+        GetUserData();
+
+		    // This call will only succeed on page load event if user already has opened a loan in TPOC.
+		    // Use the onLoanOpened event (as shown below) to get/refresh loan data when user opens a loan.
+        console.log('Within the load event');
+          GetLoanData();
+      });
+    });
+    // Subscribe to loanOpen event to refresh context when loan context changes (context event handling).
+     elli.script.subscribe('tpoApplication', 'loanOpen', onLoanOpened);
+     function onLoanOpened(proxy, loanData) {
+     console.log('Printing within within the onLoanOpened event');
+       GetLoanData();
+       this.loanData = loanData;
+       console.log('loanOpen => loanData ===', loanData);
+     }
+
+
+    // Sample methods for getting various data objects, just console logging for illustrative purposes.
+    function GetUserData() {
+      // Get basic user info and console log only.
+      tpoAppObject.getUserData().then(function (userData) {
+	      user_FullName = userData.userFullName;
+	      user_Email = userData.email;
+        //console.log('User Data ===', userData);
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+      // Get full user profile, console log and populate some basic on screen information.
+      tpoAppObject.getUserProfileData().then(function (userProfileData) {
+        //console.log('User Profile Data ===', userProfileData);
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+        }
+
+        function myFunction() {
+          var borrowerFirstNameURL = "tfa_2=" + borrowerFirstName + "&";
+          var brokerNameURL = "tfa_3=" + brokerName + "&";
+          var accountManagerURL = "tfa_5=" + accountManager + "&";
+          var titleCoURL = "tfa_6=" + titleCo + "&";
+          var titlePhoneNumURL = "tfa_8=" + titlePhoneNum + "&";
+          var titleContactURL = "tfa_9=" + titleContact + "&";
+          var escrowCoURL = "tfa_11=" + escrowCo + "&";
+          var escrowPhoneURL = "tfa_12=" + escrowPhone + "&";
+          var escrowContactURL = "tfa_14=" + escrowContact + "&";
+          var escrowEmailURL = "tfa_15=" + escrowEmail + "&";
+          var vestingTextURL = "tfa_27=" + vestingText + "&";
+          var loanProgramURL = "tfa_31=" + loanProgram + "&";
+          var transactionTypeURL = "tfa_32=" + transactionType + "&";
+          var impoundsURL = "tfa_38=" + impounds + "&";
+          var interestRateURL = "tfa_47=" + interestRate + "&";
+          var totalLoanAmountURL = "tfa_48=" + totalLoanAmount + "&";
+          var whoPaidURL = "tfa_50=" + whoPaid + "&";
+          var contractProcessorFeeURL = "tfa_53=" + contractProcessorFee + "&";
+          var contractProcessorNameURL = "tfa_54=" + contractProcessorName + "&";
+          var brokerFeesBorrowerPaidCompURL = "tfa_55=" + brokerFeesBorrowerPaidComp + "&";
+          var originationFeeURL = "tfa_56=" + originationFee + "&";
+          var brokerOtherLoanFeePercentageURL = "tfa_57=" + brokerOtherLoanFeePercentage + "&";
+          var brokerOtherLoanFeeAmountURL = "tfa_58=" + brokerOtherLoanFeeAmount + "&";
+          var totalBrokerFeesURL = "tfa_59=" + totalBrokerFees + "&";
+          var loNameURL = "tfa_74=" + loName + "&";
+          var loEmailURL = "tfa_75=" + loEmail + "&";
+          var loPhoneURL = "tfa_77=" + loPhone + "&";
+          var loFaxURL = "tfa_78=" + loFax + "&";
+          var estimatedClosingDateURL = "tfa_28=" + estimatedClosingDate + "&";
+          var firstPaymentDateURL = "tfa_29=" + firstPaymentDate;
+          
+          var fieldValueString = borrowerFirstNameURL + brokerNameURL + accountManagerURL + titleCoURL +
+          titlePhoneNumURL + titleContactURL + escrowCoURL + escrowPhoneURL + escrowContactURL + escrowEmailURL +
+          vestingTextURL + loanProgramURL + transactionTypeURL + impoundsURL + interestRateURL + totalLoanAmountURL +
+          whoPaidURL + contractProcessorFeeURL + contractProcessorNameURL + brokerFeesBorrowerPaidCompURL + originationFeeURL +
+          brokerOtherLoanFeePercentageURL + brokerOtherLoanFeeAmountURL + totalBrokerFeesURL + loNameURL + loEmailURL + loPhoneURL + loFaxURL + 
+          estimatedClosingDateURL + firstPaymentDateURL;
+          console.log(fieldValueString);
+          document.location.href = "https://www.tfaforms.com/4799706?" + fieldValueString;
+        }
+
+    function GetLoanData() {
+      // Get loan summary and console log only.
+      // Get full loan object, console log and populate some basic on screen information.
+      tpoAppObject.getLoanData().then(function (loanData) {
+      console.log('Loan Data ===', loanData);
+        loanGuid = loanData.EncompassId;
+        borrowerFirstName = loanData.Applications[0].Borrower.FirstNameWithMiddleName + ' ' + loanData.Applications[0].Borrower.LastName;
+        var tpoData = loanData.TPO;
+        //NEED TO ADD IN CHECK FOR CX.BROKERDOINGBUSSAS
+        brokerName = tpoData.CompanyLegalName;
+        
+        loName = tpoData.LOName ? tpoData.LOName : "";
+        loEmail = tpoData.LOEmail ? tpoData.LOEmail : "";
+        loPhone = tpoData.LOPhone ? tpoData.LOPhone : "";
+        loFax = tpoData.LOFax ? tpoData.LOFax : "";
+        
+
+        contactsList = loanData.Contacts;
+        contactsList.forEach((item,index)=> {
+        
+          if(item.ContactType === 'LOAN_PROCESSOR'){
+          if(item.Name){
+          accountManager = item.Name;
+          }else { accountManager = "";}
+          }
+          
+          if(item.ContactType === 'TITLE_COMPANY'){
+            if(item.Phone) { titlePhoneNum = item.Phone; }
+            if(item.ContactName) { titleContact = item.ContactName; }
+          }
+          
+          if(item.ContactType === 'ESCROW_COMPANY'){
+            if(item.Phone) { escrowPhone = item.Phone; }
+            if(item.ContactName) { escrowContact = item.ContactName; }
+            if(item.Email) { escrowEmail = item.Email; }
+          }
+
+        });
+        if(loanData.ClosingCost.TitleCompanyName){
+          titleCo = loanData.ClosingCost.TitleCompanyName.replace(/&/g, "AND");
+        }
+        if(loanData.ClosingCost.EscrowCompanyName){
+          escrowCo = loanData.ClosingCost.EscrowCompanyName.replace(/&/g, "AND");
+        }
+        if(loanData.ClosingDocument.FinalVestingDescription){
+          vestingText = loanData.ClosingDocument.FinalVestingDescription.replace(/&/g, "AND");
+        }
+        var loanProdData = loanData.LoanProductData;
+        //The values returned in the API, specifically the TPO Connect is so weird compared to within Encompass.
+        estimatedClosingDate = loanProdData.LoanScheduledClosingDate ? loanProdData.LoanScheduledClosingDate : "" ;
+        estimatedClosingDate = Date(estimatedClosingDate);
+        //The values returned in the API, specifically the TPO Connect is so weird compared to within Encompass.
+        firstPaymentDate = loanProdData.ScheduledFirstPaymentDate ? loanProdData.ScheduledFirstPaymentDate : "";
+        firstPaymentDate = Date(firstPaymentDate);
+	      loanProgram = loanData.LoanProgramName ? loanData.LoanProgramName : ""; 
+        //loanProgram = loanData.LoanProgramName;
+        //Need to figure out specific wording for transaction type
+        transactionType = loanData.Property.LoanPurposeType;
+        switch(transactionType) {
+          case "Cash-Out Refinance":
+            transactionType = "Refi Cash-Out";
+            break;
+          case "NoCash-Out Refinance":
+            transactionType = "";
+            break;
+          case "Purchase":
+            transactionType = "Purchase";
+            break;
+          default:
+        }
+        impoundsCheck = loanData.UnderwritingEscrowIndicator;
+        switch(impoundsCheck) {
+          case true:
+            impounds = "Yes";
+            break;
+          case false:
+            impounds = "No";
+            break;
+          default:
+        }
+        interestRate = loanData.InitialInterestRate;
+        totalLoanAmount = loanData.BaseLoanAmount;
+        whoPaid = loanData.LOCompensation.WhoPaidCompensation;
+        switch(whoPaid){
+          case "Lender Paid":
+            whoPaid = "Lender";
+            break;
+          case "Broker Paid":
+            whoPaid = "Broker";
+            break;
+        }
+        fundingFeesArray = loanData.FundingFees;
+        fundingFeeList = loanData.FundingFeeList;
+        if(fundingFeeList.includes("813."))
+        {
+          var begIndex = fundingFeeList.indexOf("813.");
+          var lastIndex = fundingFeeList.length-1;
+          var shortenedList = fundingFeeList.substring(begIndex,lastIndex);
+          var endIndex = 0;
+          if(shortenedList.indexOf("\n") == -1){
+            console.log("No return character");
+          }
+          else {
+            endIndex = shortenedList.indexOf("\n");
+            var lastSubstring = shortenedList.substring(0,endIndex);
+            contractProcessorFee = lastSubstring.substring(lastSubstring.lastIndexOf("$")+1,endIndex);
+            console.log(contractProcessorFee);
+          }
+
+          fundingFeesArray.forEach((item,index)=> {
+            if(item.LineId === '813.'){
+              contractProcessorName = item.Payee;
+              console.log("value of contract processor Name: " + contractProcessorName);
+            }
+            if(item.LineId === '801a.'){
+              brokerFeesBorrowerPaidComp = item.Amount;
+              originationFee = brokerFeesBorrowerPaidComp;
+              console.log("value of Loan Origination Fee: " + brokerFeesBorrowerPaidComp);
+            }
+          });
+        }
+        feesArray = loanData.Fees;
+        feesArray.forEach((item,index) => {
+          if(item.FeeType === 'MortgageBrokerFee'){
+            brokerOtherLoanFeePercentage = item.Percentage ? item.Percentage : "";
+            brokerOtherLoanFeeAmount = item.PaidToBroker ? item.PaidToBroker : "";
+          }
+        });
+
+        totalBrokerFees = loanData.Hmda.OriginationCharges;
+
+            myFunction();
+      })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+    }
+    </script>
+</head>
+<body style="font-family: ProximaNova-Medium,Helvetica,Arial,sans-serif;">
+</body>
+</html>

@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdn.elliemae.io/elliemae/core/ssf/1.0/elli.ssf.guest-with-polyfill.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script>
+	var tpoAppObject = null;
+  var siteId = "";
+  var loanGuid = "";
+  var loanNumber = "";
+  var borrowerFirstName = "";
+  var borrowerLastName = "";
+  var contactsList = [];
+  var customFields = [];
+
+    // Instantiate objects on window load (one-time event handling).
+    window.addEventListener("load", function () {
+      elli.script.guest.create();
+      elli.script.getObject("tpoApplication").then(function (tpoAppObject) {
+        this.tpoAppObject = tpoAppObject;
+		    // This call will only succeed on page load event if user already has opened a loan in TPOC.
+		    // Use the onLoanOpened event (as shown below) to get/refresh loan data when user opens a loan.
+        console.log('Before GetLoanData function');
+        GetLoanData();
+        console.log('Within addeventlistener loan after GetLoanData');
+      });
+    });
+
+    // Subscribe to loanOpen event to refresh context when loan context changes (context event handling).
+     // elli.script.subscribe('tpoApplication', 'loanOpen', onLoanOpened);
+     // function onLoanOpened(proxy, loanData) {
+     //   GetLoanData();
+     //   this.loanData = loanData;
+     //   console.log('loanOpen => loanData ===', loanData);
+     // }
+
+    function GetLoanData() {
+      tpoAppObject.getLoanData().then(function (loanData) {
+          console.log('Loan Data ===', loanData);
+          loanGuid = loanData.EncompassId;
+          loanNumber = loanData.LoanNumber;
+          customFields = loanData.CustomFields;
+          borrowerFirstName = loanData.Applications[0].Borrower.FirstName;
+          borrowerLastName = loanData.Applications[0].Borrower.LastName;
+          console.log(loanData);
+          console.log(typeof tpoAppObject);
+          tpoAppObject.getExternalOrgDetails().then(function(externalOrgData) {
+            console.log('External Org data ===', externalOrgData);
+            siteId = externalOrgData.siteId;
+          });
+        }).catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+      }
+    </script>
+</head>
+<body style="font-family: ProximaNova-Medium,Helvetica,Arial,sans-serif;">
+</body>
+</html>
